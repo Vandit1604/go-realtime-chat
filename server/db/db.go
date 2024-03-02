@@ -3,6 +3,8 @@ package db
 import (
 	"database/sql"
 	"log"
+
+	_ "github.com/lib/pq"
 )
 
 type Database struct {
@@ -19,10 +21,10 @@ func NewDatabase() (*Database, error) {
 	return &Database{db: db}, nil
 }
 
-func (d *Database) close() {
+func (d *Database) Close() {
 	d.db.Close()
 }
 
-func (d *Database) getDb() *sql.DB {
+func (d *Database) GetDb() *sql.DB {
 	return d.db
 }

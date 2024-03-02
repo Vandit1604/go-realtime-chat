@@ -1,15 +1,19 @@
-.PHONY: postgresinit
 postgresinit:
-	docker run --name postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=password -e POSTGRES_DB=go-chat -d postgres:15-alpine
+	docker run --name postgres15 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=password -d postgres:15-alpine
 
-.PHONY: postgres
 postgres:
-	docker exec -it postgres psql go-chat
+	docker exec -it postgres15 psql
 
-.PHONY: createdb
 createdb:
-	docker exec -it postgres createdb --username=root --owner=root go-chat
+	docker exec -it postgres15 createdb --username=root --owner=root go-chat
 
-.PHONY: dropdb
 dropdb:
-	docker exec -it postgres dropdb go-chat
+	docker exec -it postgres15 dropdb go-chat
+
+migrateup:
+	migrate -path db/migrations -database "postgresql://root:password@localhost:5432/go-chat?sslmode=disable" -verbose up
+
+migratedown:
+	migrate -path db/migrations -database "postgresql://root:password@localhost:5432/go-chat?sslmode=disable" -verbose down
+
+.PHONY: postgresinit postgres createdb dropdb migrateup migratedown
